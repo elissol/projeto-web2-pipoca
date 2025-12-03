@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Produtos - Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            min-height: 100vh;
+            color: #ecf0f1;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .admin-header h1 {
+            color: #fff;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .admin-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .admin-nav a {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .admin-nav a:hover {
+            transform: translateY(-2px);
+        }
+
+        .back-btn {
+            background: #7f8c8d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .categoria {
+            margin-bottom: 40px;
+        }
+
+        .categoria h2 {
+            color: #e74c3c;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e74c3c;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .produtos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .produto-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .produto-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .produto-tipo {
+            background: #e74c3c;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .status {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+
+        .disponivel {
+            background: #27ae60;
+            color: white;
+        }
+
+        .indisponivel {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .produto-info {
+            margin-bottom: 15px;
+        }
+
+        .produto-info div {
+            margin-bottom: 5px;
+        }
+
+        .precos {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .preco-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .produto-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+        }
+
+        .btn-edit {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #95a5a6;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state i {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .add-btn {
+            background: #27ae60;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <a href="/admin" class="back-btn"><i class="fas fa-arrow-left"></i>Voltar ao Dashboard</a>
+        
+        <div class="admin-header">
+            <h1><i class="fas fa-box-open"></i>Gerenciar Produtos</h1>
+            <p>Edite os produtos disponíveis no cardápio</p>
+            
+            <div class="admin-nav">
+                <a href="/admin"><i class="fas fa-chart-bar"></i> Dashboard</a>
+                <a href="/admin/pedidos"><i class="fas fa-clipboard-list"></i> Todos os Pedidos</a>
+                <a href="/admin/doce/novo"><i class="fas fa-plus"></i> Novo Produto</a>
+            </div>
+        </div>
+
+        <% if (produtos) { %>
+            <!-- BRIGADEIROS -->
+            <div class="categoria">
+                <h2>
+                    <span><i class="fas fa-star"></i> Brigadeiros (<%= produtos.brigadeiros ? produtos.brigadeiros.length : 0 %>)</span>
+                    <a href="/admin/doce/novo?tipo=brigadeiro" class="add-btn">
+                        <i class="fas fa-plus"></i> Novo Brigadeiro
+                    </a>
+                </h2>
+                <div class="produtos-grid">
+                    <% if (produtos.brigadeiros && produtos.brigadeiros.length > 0) { %>
+                        <% produtos.brigadeiros.forEach(produto => { %>
+                        <div class="produto-card">
+                            <div class="produto-header">
+                                <span class="produto-tipo">Brigadeiro</span>
+                                <span class="status <%= produto.disponivel ? 'disponivel' : 'indisponivel' %>">
+                                    <%= produto.disponivel ? 'DISPONÍVEL' : 'INDISPONÍVEL' %>
+                                </span>
+                            </div>
+                            <div class="produto-info">
+                                <div><strong>Nome:</strong> <%= produto.nome %></div>
+                                <div><strong>Descrição:</strong> <%= produto.descricao %></div>
+                                <div class="precos">
+                                    <div class="preco-item">
+                                        <span>25 unidades:</span>
+                                        <span>R$ <%= parseFloat(produto.preco_25).toFixed(2) %></span>
+                                    </div>
+                                    <div class="preco-item">
+                                        <span>50 unidades:</span>
+                                        <span>R$ <%= parseFloat(produto.preco_50).toFixed(2) %></span>
+                                    </div>
+                                    <div class="preco-item">
+                                        <span>100 unidades:</span>
+                                        <span>R$ <%= parseFloat(produto.preco_100).toFixed(2) %></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="produto-actions">
+                                <a href="/admin/doce/editar/brigadeiro/<%= produto.id %>" class="btn btn-edit">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <a href="/admin/doce/excluir/brigadeiro/<%= produto.id %>" class="btn btn-delete" onclick="return confirm('Tem certeza que deseja excluir este produto?')">
+                                    <i class="fas fa-trash"></i> Excluir
+                                </a>
+                            </div>
+                        </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <i class="fas fa-star"></i>
+                            <h3>Nenhum brigadeiro cadastrado</h3>
+                            <a href="/admin/doce/novo?tipo=brigadeiro" class="btn" style="background: #27ae60;">
+                                <i class="fas fa-plus"></i> Cadastrar Primeiro Brigadeiro
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- BROWNIES -->
+            <div class="categoria">
+                <h2>
+                    <span><i class="fas fa-birthday-cake"></i> Brownies (<%= produtos.brownies ? produtos.brownies.length : 0 %>)</span>
+                    <a href="/admin/doce/novo?tipo=brownie" class="add-btn">
+                        <i class="fas fa-plus"></i> Novo Brownie
+                    </a>
+                </h2>
+                <div class="produtos-grid">
+                    <% if (produtos.brownies && produtos.brownies.length > 0) { %>
+                        <% produtos.brownies.forEach(produto => { %>
+                        <div class="produto-card">
+                            <div class="produto-header">
+                                <span class="produto-tipo">Brownie</span>
+                                <span class="status <%= produto.disponivel ? 'disponivel' : 'indisponivel' %>">
+                                    <%= produto.disponivel ? 'DISPONÍVEL' : 'INDISPONÍVEL' %>
+                                </span>
+                            </div>
+                            <div class="produto-info">
+                                <div><strong>Nome:</strong> <%= produto.nome %></div>
+                                <div><strong>Descrição:</strong> <%= produto.descricao %></div>
+                                <div class="precos">
+                                    <div class="preco-item">
+                                        <span>Pequeno:</span>
+                                        <span>R$ <%= parseFloat(produto.preco_pequeno).toFixed(2) %></span>
+                                    </div>
+                                    <div class="preco-item">
+                                        <span>Médio:</span>
+                                        <span>R$ <%= parseFloat(produto.preco_medio).toFixed(2) %></span>
+                                    </div>
+                                    <div class="preco-item">
+                                        <span>Grande:</span>
+                                        <span>R$ <%= parseFloat(produto.preco_grande).toFixed(2) %></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="produto-actions">
+                                <a href="/admin/doce/editar/brownie/<%= produto.id %>" class="btn btn-edit">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <a href="/admin/doce/excluir/brownie/<%= produto.id %>" class="btn btn-delete" onclick="return confirm('Tem certeza que deseja excluir este produto?')">
+                                    <i class="fas fa-trash"></i> Excluir
+                                </a>
+                            </div>
+                        </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <i class="fas fa-birthday-cake"></i>
+                            <h3>Nenhum brownie cadastrado</h3>
+                            <a href="/admin/doce/novo?tipo=brownie" class="btn" style="background: #27ae60;">
+                                <i class="fas fa-plus"></i> Cadastrar Primeiro Brownie
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- PIPOCAS -->
+            <div class="categoria">
+                <h2>
+                    <span><i class="fas fa-popcorn"></i> Pipocas (<%= produtos.pipocas ? produtos.pipocas.length : 0 %>)</span>
+                    <a href="/admin/doce/novo?tipo=pipoca" class="add-btn">
+                        <i class="fas fa-plus"></i> Nova Pipoca
+                    </a>
+                </h2>
+                <div class="produtos-grid">
+                    <% if (produtos.pipocas && produtos.pipocas.length > 0) { %>
+                        <% produtos.pipocas.forEach(produto => { %>
+                        <div class="produto-card">
+                            <div class="produto-header">
+                                <span class="produto-tipo">Pipoca</span>
+                                <span class="status <%= produto.disponivel ? 'disponivel' : 'indisponivel' %>">
+                                    <%= produto.disponivel ? 'DISPONÍVEL' : 'INDISPONÍVEL' %>
+                                </span>
+                            </div>
+                            <div class="produto-info">
+                                <div><strong>Nome:</strong> <%= produto.nome %></div>
+                                <div><strong>Descrição:</strong> <%= produto.descricao %></div>
+                                <div class="precos">
+                                    <div class="preco-item">
+                                        <span>45gr:</span>
+                                        <span>R$ <%= parseFloat(produto.preco_45gr).toFixed(2) %></span>
+                                    </div>
+                                    <div class="preco-item">
+                                        <span>50gr:</span>
+                                        <span>R$ <%= parseFloat(produto.preco_50gr).toFixed(2) %></span>
+                                    </div>
+                                    <div class="preco-item">
+                                        <span>100gr:</span>
+                                        <span>R$ <%= parseFloat(produto.preco_100gr).toFixed(2) %></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="produto-actions">
+                                <a href="/admin/doce/editar/pipoca/<%= produto.id %>" class="btn btn-edit">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <a href="/admin/doce/excluir/pipoca/<%= produto.id %>" class="btn btn-delete" onclick="return confirm('Tem certeza que deseja excluir este produto?')">
+                                    <i class="fas fa-trash"></i> Excluir
+                                </a>
+                            </div>
+                        </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <i class="fas fa-popcorn"></i>
+                            <h3>Nenhuma pipoca cadastrada</h3>
+                            <a href="/admin/doce/novo?tipo=pipoca" class="btn" style="background: #27ae60;">
+                                <i class="fas fa-plus"></i> Cadastrar Primeira Pipoca
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido de Brigadeiros - Doceria Delícia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffb6c1, #ff69b4, #db7093);
+            min-height: 100vh;
+            color: #8b4513;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #fff;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #fff;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #ff6b9d, #ff8fab);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: linear-gradient(45deg, #ff8fab, #ff6b9d);
+            transform: scale(1.05);
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #d63384;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ffb6c1;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #ff6b9d;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .sabor-item {
+            background: #fff5f7;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #ffb6c1;
+        }
+
+        .valor-display {
+            background: #ffebf0;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+            border: 2px dashed #ff6b9d;
+        }
+
+        .valor-display h3 {
+            color: #d63384;
+            margin-bottom: 5px;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="btn back-btn">← Voltar para Home</a>
+        
+        <div class="header">
+            <h1>🍫 Brigadeiros</h1>
+            <p class="subtitle">Faça seu pedido de brigadeiros deliciosos!</p>
+        </div>
+
+        <div class="form-container">
+            <form id="brigadeiroForm">
+                <div class="form-group">
+                    <label for="cliente">Nome do Cliente:</label>
+                    <input type="text" id="cliente" name="cliente" required>
+                </div>
+
+                <div id="saboresContainer">
+                    <div class="sabor-item" id="sabor-1">
+                        <div class="form-group">
+                            <label>Sabor 1:</label>
+                            <select name="sabor[]" required>
+                                <option value="">Selecione o sabor</option>
+                                <option value="chocolate">Chocolate</option>
+                                <option value="morango">Morango</option>
+                                <option value="ninho">Ninho</option>
+                                <option value="prestigio">Prestígio</option>
+                                <option value="beijinho">Beijinho</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantidade para este sabor:</label>
+                            <select name="quantidade[]" required onchange="calcularValorBrigadeiro()">
+                                <option value="">Selecione a quantidade</option>
+                                <option value="25">25 unidades - R$ 37,50</option>
+                                <option value="50">50 unidades - R$ 75,00</option>
+                                <option value="100">100 unidades - R$ 150,00</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" id="addSaborBtn" class="btn">+ Adicionar Outro Sabor</button>
+
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="favorito" name="favorito">
+                    <label for="favorito">Marcar como favorito</label>
+                </div>
+
+                <div class="valor-display">
+                    <h3>Valor Total:</h3>
+                    <p id="valorTotal" style="font-size: 2em; font-weight: bold;">R$ 0,00</p>
+                </div>
+
+                <button type="button" id="finalizarBtn" class="btn">Finalizar Pedido</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('brigadeiroForm');
+            const calcularBtn = document.getElementById('calcularBtn');
+            const finalizarBtn = document.getElementById('finalizarBtn');
+            const valorDisplay = document.getElementById('valorTotal');
+            const saboresContainer = document.getElementById('saboresContainer');
+            const addSaborBtn = document.getElementById('addSaborBtn');
+            
+            let saborCount = 1;
+            
+            // Adicionar novo campo de sabor
+            addSaborBtn.addEventListener('click', function() {
+                saborCount++;
+                const novoCampo = `
+                    <div class="sabor-item" id="sabor-${saborCount}">
+                        <div class="form-group">
+                            <label>Sabor ${saborCount}:</label>
+                            <select name="sabor[]" required>
+                                <option value="">Selecione o sabor</option>
+                                <option value="chocolate">Chocolate</option>
+                                <option value="morango">Morango</option>
+                                <option value="ninho">Ninho</option>
+                                <option value="prestigio">Prestígio</option>
+                                <option value="beijinho">Beijinho</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantidade para este sabor:</label>
+                            <select name="quantidade[]" required onchange="calcularValorBrigadeiro()">
+                                <option value="">Selecione a quantidade</option>
+                                <option value="25">25 unidades - R$ 37,50</option>
+                                <option value="50">50 unidades - R$ 75,00</option>
+                                <option value="100">100 unidades - R$ 150,00</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn" onclick="removerSabor(${saborCount})" style="background: #dc3545;">Remover</button>
+                    </div>
+                `;
+                saboresContainer.insertAdjacentHTML('beforeend', novoCampo);
+            });
+            
+            // Calcular valor
+            window.calcularValorBrigadeiro = function() {
+                const quantidades = document.getElementsByName('quantidade[]');
+                let total = 0;
+                
+                quantidades.forEach(select => {
+                    const valor = parseFloat(select.value);
+                    if (!isNaN(valor)) {
+                        if (valor === 25) total += 37.50;
+                        else if (valor === 50) total += 75.00;
+                        else if (valor === 100) total += 150.00;
+                    }
+                });
+                
+                valorDisplay.textContent = `R$ ${total.toFixed(2)}`;
+            };
+            
+            // Remover sabor
+            window.removerSabor = function(id) {
+                const elemento = document.getElementById(`sabor-${id}`);
+                if (elemento && saborCount > 1) {
+                    elemento.remove();
+                    saborCount--;
+                    calcularValorBrigadeiro();
+                }
+            };
+            
+            // Finalizar pedido
+            finalizarBtn.addEventListener('click', function() {
+                const formData = new FormData(form);
+                
+                // Calcular valor total antes de enviar
+                calcularValorBrigadeiro();
+                const valorTotal = parseFloat(valorDisplay.textContent.replace('R$ ', ''));
+                
+                const data = {
+                    cliente: formData.get('cliente'),
+                    sabor: formData.getAll('sabor[]'),
+                    quantidade: formData.getAll('quantidade[]'),
+                    valor_total: valorTotal,
+                    favorito: formData.get('favorito')
+                };
+                
+                fetch('/brigadeiro/finalizar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Pedido salvo com sucesso!');
+                        form.reset();
+                        valorDisplay.textContent = 'R$ 0,00';
+                        // Reset sabores
+                        saboresContainer.innerHTML = `
+                            <div class="sabor-item" id="sabor-1">
+                                <div class="form-group">
+                                    <label>Sabor 1:</label>
+                                    <select name="sabor[]" required>
+                                        <option value="">Selecione o sabor</option>
+                                        <option value="chocolate">Chocolate</option>
+                                        <option value="morango">Morango</option>
+                                        <option value="ninho">Ninho</option>
+                                        <option value="prestigio">Prestígio</option>
+                                        <option value="beijinho">Beijinho</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Quantidade para este sabor:</label>
+                                    <select name="quantidade[]" required onchange="calcularValorBrigadeiro()">
+                                        <option value="">Selecione a quantidade</option>
+                                        <option value="25">25 unidades - R$ 37,50</option>
+                                        <option value="50">50 unidades - R$ 75,00</option>
+                                        <option value="100">100 unidades - R$ 150,00</option>
+                                    </select>
+                                </div>
+                            </div>
+                        `;
+                        saborCount = 1;
+                    } else {
+                        alert('Erro ao salvar pedido: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Erro ao processar pedido');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

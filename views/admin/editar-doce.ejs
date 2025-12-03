@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Doce - Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            min-height: 100vh;
+            color: #ecf0f1;
+        }
+
+        .admin-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .admin-header h1 {
+            color: #fff;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            background: #7f8c8d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .form-group label i {
+            margin-right: 8px;
+            width: 20px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #34495e;
+            border-radius: 10px;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.9);
+            color: #2c3e50;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #e74c3c;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-cancel {
+            background: #7f8c8d;
+            margin-right: 10px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .tipo-info {
+            background: #e74c3c;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+</style>
+</head>
+<body>
+    <div class="admin-container">
+        <a href="/admin/produtos" class="back-btn"><i class="fas fa-arrow-left"></i>Voltar para Produtos</a>
+        
+        <div class="admin-header">
+            <h1><i class="fas fa-edit"></i>Editar Produto</h1>
+            <p>Atualize as informações deste produto</p>
+        </div>
+
+        <div class="form-container">
+            <div class="tipo-info">
+                <i class="fas fa-tag"></i> Tipo: <%= tipo.charAt(0).toUpperCase() + tipo.slice(1) %>
+            </div>
+
+            <form method="POST" action="/admin/doce/editar/<%= tipo %>/<%= produto.id %>">
+                <div class="form-group">
+                    <label for="nome"><i class="fas fa-box"></i>Nome do Produto:</label>
+                    <input type="text" id="nome" name="nome" value="<%= produto.nome %>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="descricao"><i class="fas fa-align-left"></i>Descrição:</label>
+                    <textarea id="descricao" name="descricao" rows="3" required><%= produto.descricao %></textarea>
+                </div>
+
+                <% if (tipo === 'brigadeiro') { %>
+                    <h3>Preços - Brigadeiro</h3>
+                    <div class="form-group">
+                        <label for="preco_25"><i class="fas fa-coins"></i>Preço 25 unidades:</label>
+                        <input type="number" id="preco_25" name="preco_25" step="0.01" min="0" value="<%= produto.preco_25 %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="preco_50"><i class="fas fa-coins"></i>Preço 50 unidades:</label>
+                        <input type="number" id="preco_50" name="preco_50" step="0.01" min="0" value="<%= produto.preco_50 %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="preco_100"><i class="fas fa-coins"></i>Preço 100 unidades:</label>
+                        <input type="number" id="preco_100" name="preco_100" step="0.01" min="0" value="<%= produto.preco_100 %>" required>
+                    </div>
+                <% } else if (tipo === 'brownie') { %>
+                    <h3>Preços - Brownie</h3>
+                    <div class="form-group">
+                        <label for="preco_pequeno"><i class="fas fa-coins"></i>Preço tamanho Pequeno:</label>
+                        <input type="number" id="preco_pequeno" name="preco_pequeno" step="0.01" min="0" value="<%= produto.preco_pequeno %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="preco_medio"><i class="fas fa-coins"></i>Preço tamanho Médio:</label>
+                        <input type="number" id="preco_medio" name="preco_medio" step="0.01" min="0" value="<%= produto.preco_medio %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="preco_grande"><i class="fas fa-coins"></i>Preço tamanho Grande:</label>
+                        <input type="number" id="preco_grande" name="preco_grande" step="0.01" min="0" value="<%= produto.preco_grande %>" required>
+                    </div>
+                <% } else if (tipo === 'pipoca') { %>
+                    <h3>Preços - Pipoca</h3>
+                    <div class="form-group">
+                        <label for="preco_45gr"><i class="fas fa-coins"></i>Preço 45gr:</label>
+                        <input type="number" id="preco_45gr" name="preco_45gr" step="0.01" min="0" value="<%= produto.preco_45gr %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="preco_50gr"><i class="fas fa-coins"></i>Preço 50gr:</label>
+                        <input type="number" id="preco_50gr" name="preco_50gr" step="0.01" min="0" value="<%= produto.preco_50gr %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="preco_100gr"><i class="fas fa-coins"></i>Preço 100gr:</label>
+                        <input type="number" id="preco_100gr" name="preco_100gr" step="0.01" min="0" value="<%= produto.preco_100gr %>" required>
+                    </div>
+                <% } %>
+
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="disponivel" name="disponivel" <%= produto.disponivel ? 'checked' : '' %>>
+                    <label for="disponivel"><i class="fas fa-check-circle"></i>Disponível para venda</label>
+                </div>
+
+                <div class="form-actions">
+                    <a href="/admin/produtos" class="btn btn-cancel">
+                        <i class="fas fa-times"></i>Cancelar
+                    </a>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-save"></i>Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

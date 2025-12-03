@@ -1,0 +1,219 @@
+ <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todos os Pedidos - Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            min-height: 100vh;
+            color: #ecf0f1;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .admin-header h1 {
+            color: #fff;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .admin-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .admin-nav a {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .admin-nav a:hover {
+            transform: translateY(-2px);
+        }
+
+        .back-btn {
+            background: #7f8c8d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .pedidos-table {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .table-header {
+            background: rgba(231, 76, 60, 0.8);
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 80px 1fr 1fr 1fr 1fr 100px 150px;
+            gap: 10px;
+            font-weight: bold;
+        }
+
+        .pedido-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 1fr 1fr 1fr 100px 150px;
+            gap: 10px;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            align-items: center;
+        }
+
+        .pedido-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tipo-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .brigadeiro { background: #e74c3c; }
+        .brownie { background: #3498db; }
+        .pipoca { background: #f39c12; }
+
+        .favorito {
+            color: #e74c3c;
+        }
+
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #95a5a6;
+        }
+
+        .empty-state i {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <a href="/admin" class="back-btn"><i class="fas fa-arrow-left"></i>Voltar ao Dashboard</a>
+        
+        <div class="admin-header">
+            <h1><i class="fas fa-clipboard-list"></i>Todos os Pedidos</h1>
+            <p>Visualize e gerencie todos os pedidos realizados</p>
+            
+            <div class="admin-nav">
+                <a href="/admin"><i class="fas fa-chart-bar"></i> Dashboard</a>
+                <a href="/admin/produtos"><i class="fas fa-cookie-bite"></i> Gerenciar Produtos</a>
+                <a href="/admin/doce/novo"><i class="fas fa-plus"></i> Novo Produto</a>
+            </div>
+        </div>
+
+        <div class="pedidos-table">
+            <div class="table-header">
+                <div>ID</div>
+                <div>Cliente</div>
+                <div>Tipo</div>
+                <div>Sabor</div>
+                <div>Detalhes</div>
+                <div>Valor</div>
+                <div>Data</div>
+            </div>
+
+            <% if (pedidos && pedidos.length > 0) { %>
+                <% pedidos.forEach(pedido => { %>
+                <div class="pedido-row">
+                    <div>#<%= pedido.id %></div>
+                    <div><%= pedido.cliente %></div>
+                    <div>
+                        <span class="tipo-badge <%= pedido.tipo %>">
+                            <%= pedido.tipo.charAt(0).toUpperCase() + pedido.tipo.slice(1) %>
+                        </span>
+                    </div>
+                    <div><%= pedido.sabor %></div>
+                    <div>
+                        <% if (pedido.tipo === 'brigadeiro') { %>
+                            <%= pedido.quantidade %> unidades
+                        <% } else if (pedido.tipo === 'brownie') { %>
+                            <%= pedido.tamanho %> - <%= pedido.quantidade %> un
+                        <% } else if (pedido.tipo === 'pipoca') { %>
+                            <%= pedido.peso %> - <%= pedido.quantidade %> un
+                        <% } %>
+                        <% if (pedido.favorito) { %>
+                            <i class="fas fa-heart favorito"></i>
+                        <% } %>
+                    </div>
+                    <div>R$ <%= parseFloat(pedido.valor_total).toFixed(2) %></div>
+                    <div><%= new Date(pedido.created_at).toLocaleDateString('pt-BR') %></div>
+                </div>
+                <% }) %>
+            <% } else { %>
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <h3>Nenhum pedido encontrado</h3>
+                    <p>Ainda não há pedidos realizados na doceria.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</body>
+</html>
