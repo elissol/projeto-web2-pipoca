@@ -1,18 +1,22 @@
 const mysql = require('mysql2');
 
 const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'admin1234!',
-    database: 'doceria_db'
+    host: 'mysql-3e7c74e3-magaliadrieli-89f0.k.aivencloud.com',
+    port: 11452,
+    user: 'avnadmin',
+    password: 'CLICK_TO:REVEAL_PASSWORD', // Você precisa revelar e copiar a senha real
+    database: 'defaultdb',
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
 connection.connect((err) => {
     if (err) {
-        console.error('Erro ao conectar com o MySQL:', err);
+        console.error('Erro ao conectar sçakda com o MySQL:', err);
         return;
     }
-    console.log('✅ Conectado ao MySQL');
+    console.log('✅ Conectado ao MySQL no Aiven Cloud');
 });
 
 module.exports = connection;
