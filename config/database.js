@@ -5,7 +5,7 @@ const connection = mysql.createConnection({
     port: 11452,
     user: 'avnadmin',
     password: 'AVNS_DpIiHFsvLqX4QCoOK5p', // Você precisa revelar e copiar a senha real
-    database: 'defaultdb',
+    database: 'doceria_db',
     ssl: {
         rejectUnauthorized: false
     }
@@ -20,4 +20,5 @@ connection.connect((err) => {
 });
 
 module.exports = connection;
+
 
