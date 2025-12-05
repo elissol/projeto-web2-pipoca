@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doceria Delícia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffb6c1, #e086e8, #f798ec);
+            min-height: 100vh;
+            color: #8b4513;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #fff;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #fff;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .menu-item {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .menu-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        .menu-item h3 {
+            color: #e789b8;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .menu-item p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #e180d7, #db80cc);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: linear-gradient(45deg, #df71c6, #f2b9df);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> Pipoca Doce Infância</h1>
+            <p class="subtitle">Os melhores doces com muito amor e carinho!</p>
+        </div>
+
+        <div class="menu-grid">
+            <div class="menu-item" onclick="window.location.href='/brigadeiro'">
+                <img src="/public/image/bri.jpeg" alt="Brigadeiros">
+                <h3>Brigadeiros</h3>
+                <p>Deliciosos brigadeiros artesanais com diversos sabores</p>
+                <p><strong>Preços:</strong><br>25un - R$37,50<br>50un - R$75,00<br>100un - R$150,00</p>
+                <button class="btn">Fazer Pedido</button>
+            </div>
+
+            <div class="menu-item" onclick="window.location.href='/brownie'">
+                <img src="/public/image/browniecar.jpg" alt="Brownies">
+                <h3>Brownies</h3>
+                <p>Brownies incríveis com diferentes tamanhos e sabores</p>
+                <p><strong>Preços:</strong><br>Pequeno - R$12,00<br>Médio - R$15,00<br>Grande - R$18,00</p>
+                <button class="btn">Fazer Pedido</button>
+            </div>
+
+            <div class="menu-item" onclick="window.location.href='/pipoca'">
+                <img src="/public/image/pip50.jpeg" alt="Pipocas Doces">
+                <h3>Pipocas Doces</h3>
+                <p>Pipocas caramelizadas e com sabores especiais</p>
+                <p><strong>Preços:</strong><br>45gr - R$5,50<br>50gr - R$6,50<br>100gr - R$13,00</p>
+                <button class="btn">Fazer Pedido</button>
+            </div>
+        </div>
+    </div>
+<div style="text-align: center; margin-top: 30px;">
+    <a href="/admin" class="btn" style="background: #2c3e50;">
+        <i class="fas fa-crown"></i> Área Administrativa
+    </a>
+</div>
+    <script>
+        // Funções gerais da aplicação
+        document.addEventListener('DOMContentLoaded', function() {
+            // Adiciona efeitos de hover nos cards
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
